@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+		<script src="js/three.js"></script>
+		<script>
+			// Our Javascript will go here.
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 ); //FOV, Aspect Ratio, Near Clip, Far Clip //ONE of MANY cameras
+
+            const renderer = new THREE.WebGLRenderer(); //Has fallback for legacy browsers
+            renderer.setSize( window.innerWidth, window.innerHeight ); //Width/area of space we want to fill. Here the whole page // Optional third arg: false for lower resolution
+            document.body.appendChild( renderer.domElement ); //A canvas element added to body
+
+            //NOW WE MAKE A CUBE
+            const geometry = new THREE.BoxGeometry( 1, 1, 1 ); //Makes a cube
+            const material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } ); //All material take an object of properties which will be applied to them. Here we simply apply a hex color
+            const cube = new THREE.Mesh( geometry, material ); //A mesh is an object that takes a geometry and applies a material to it, which we can then insert in our scene and move freely around
+            scene.add( cube ); //By default the argument in .add(e) gets added to (0,0,0) //This would make both camera and cuber overlap so move the camera
+
+            //RENDERING THE SCENE: To actually render we need a RENDER or ANIMATE LOOP
+            /*This will create a loop that causes the renderer to draw the scene everytime the screen is refreshed (typically 60 times per second)*/
+            function animate()
+            {
+                requestAnimationFrame(animate); //Game programmers may want setInterval, but this is good because it pause when a user navigates away form the tab
+                    cube.rotation.x += 0.01; //Animates the cube: This will be run every frame (normally 60 FPS)
+                    cube.rotation.y += 0.01; //Basically anything you want to move or change has to go through the animate loop
+                renderer.render(scene, camera);
+            }
+            animate();
+
+
+camera.position.z = 5;
+		</script>
+	</body>
+</html>
