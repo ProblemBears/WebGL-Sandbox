@@ -1,0 +1,79 @@
+let renderer = null,
+    scene = null,
+    camera = null,
+    cube = null,
+    animating = false;
+
+init();
+function init()
+{
+    // Grab our container div
+    var container = document.getElementById("container");
+
+    // Create the Three.js renderer, add it to our div
+    renderer = new THREE.WebGLRenderer( { antialias: true } );
+    renderer.setSize(container.offsetWidth, container.offsetHeight);
+    container.appendChild( renderer.domElement );
+
+    // Create a new Three.js scene
+    scene = new THREE.Scene();
+
+    // Put in a camera
+    camera = new THREE.PerspectiveCamera( 45,
+        container.offsetWidth / container.offsetHeight, 1, 4000 );
+    camera.position.set( 0, 0, 3 );
+
+    // Create a directional light to show off the object
+    let light = new THREE.DirectionalLight( 0xffffff, 1.5);
+    light.position.set(0, 0, 1);
+    scene.add( light );
+
+    /* Create a shaded, texture-mapped cube and add it to the scene */
+        // First, create the texture map
+        let mapUrl = "data:image/jpeg;base64,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";
+        let texture = new THREE.TextureLoader().load(mapUrl);
+
+        // Now, create a Phong material to show shading; pass in the map
+        let material = new THREE.MeshPhongMaterial({ map: texture });
+
+        // Create the cube geometry
+        let geometry = new THREE.BoxGeometry(1, 1, 1);
+
+        // And put the geometry and material together into a mesh
+        cube = new THREE.Mesh(geometry, material);
+
+        // Turn it toward the scene, or we won't see the cube shape!
+        cube.rotation.x = Math.PI / 5;
+        cube.rotation.y = Math.PI / 5;
+
+        // Add the cube to our scene
+        scene.add( cube );
+
+    /* Add a mouse up handler to toggle the animation */
+    addMouseHandler();
+
+    // Run our render loop
+    run(); 
+}
+function run()
+{
+    // Render the scene
+    renderer.render( scene, camera );
+    // Spin the cube for next frame
+    if (animating)
+    {
+        cube.rotation.y -= 0.01;
+    }
+    // Ask for another frame
+    requestAnimationFrame(run);
+}
+function addMouseHandler()
+{
+    var dom = renderer.domElement;
+    dom.addEventListener( 'mouseup', onMouseUp, false);
+}
+function onMouseUp    (event)
+{
+    event.preventDefault();
+    animating = !animating;
+}
