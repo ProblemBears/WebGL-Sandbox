@@ -7,17 +7,46 @@ body {
 }
 
 main {
-    padding: 2rem;
+    position: relative;
+    padding: 1rem;
 }
 
 #c {
-    position: absolute;
+    position: fixed;
     width: 100vw;
     height: 100vh;
     display: block;
     z-index: -10;
 }
 
+.return-home {
+    position: fixed;
+    top: 2rem;
+    right: 2rem;
+}
+.return-home a {
+    text-decoration: none;
+    color: white;
+}
+.return-home a:hover,
+.return-home a:active {
+    color: #ecd20c;
+}
+
 h1 {
     color: white;
+}
+
+.list-toc {
+    color: white;
+}
+
+.list-toc__item a{
+    text-decoration: none;
+    color: white;
+    font-size: 1.2rem;
+}
+.list-toc__item a:hover,
+.list-toc__item a:active{
+    color: #59cfd5;
 }

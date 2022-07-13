@@ -1,26 +1,21 @@
+import { updateSize } from '../modules/helpers.js'
+
 let renderer = null,
     scene = null,
     camera = null,
     cube = null,
-    animating = false;
+    animating = false,
+    canvas = null;
 
 init();
 function init()
 {
-    // Grab our container div
-    var container = document.getElementById("container");
-
-    // Create the Three.js renderer, add it to our div
-    renderer = new THREE.WebGLRenderer( { antialias: true } );
-    renderer.setSize(container.offsetWidth, container.offsetHeight);
-    container.appendChild( renderer.domElement );
-
+    canvas = document.getElementById("c");
     // Create a new Three.js scene
     scene = new THREE.Scene();
-
     // Put in a camera
     camera = new THREE.PerspectiveCamera( 45,
-        container.offsetWidth / container.offsetHeight, 1, 4000 );
+        canvas.offsetWidth / canvas.offsetHeight, 1, 4000 );
     camera.position.set( 0, 0, 3 );
 
     // Create a directional light to show off the object
@@ -50,6 +45,10 @@ function init()
         scene.add( cube );
 
     /* Add a mouse up handler to toggle the animation */
+
+    // Create the Three.js renderer, add it to our canvas
+    renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
+
     addMouseHandler();
 
     // Run our render loop
@@ -58,6 +57,7 @@ function init()
 function run()
 {
     // Render the scene
+    updateSize(canvas, renderer, camera);
     renderer.render( scene, camera );
     // Spin the cube for next frame
     if (animating)

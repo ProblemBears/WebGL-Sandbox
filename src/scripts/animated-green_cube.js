@@ -31,7 +31,7 @@ function animate()
     requestAnimationFrame(animate); //Game programmers may want setInterval, but this is good because it pause when a user navigates away form the tab
         cube.rotation.x += 0.01; //Animates the cube: This will be run every frame (normally 60 FPS)
         cube.rotation.y += 0.01; //Basically anything you want to move or change has to go through the animate loop
-    renderer.render(scene, camera);
+    render();
     
 }
 
