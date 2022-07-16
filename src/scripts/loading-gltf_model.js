@@ -30,7 +30,7 @@ function init()
     scene.add( light );
 
     const loader = new GLTFLoader();
-    loader.load( '../../models/raygun.glb', 
+    loader.load( './models/raygun.glb', 
                 ( gltf ) => { 
                     gltf.scene.scale.set(0.01, 0.01, 0.01);
                     gltf.scene.traverse(function (child) {
