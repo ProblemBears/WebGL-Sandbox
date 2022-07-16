@@ -1,13 +1,18 @@
 import * as THREE from '../../js/three.module.js';
 import { OrbitControls } from '../../js/controls/OrbitControls.js';
 import { GLTFLoader } from '../../js/loaders/GLTFLoader.js';
-import { updateSize } from '../modules/helpers.js'
+import { updateSize } from '../modules/helpers.js';
+import { RenderPass } from '../../js/postprocessing/RenderPass.js';
+import { ShaderPass } from '../../js/postprocessing/ShaderPass.js';
+import { EffectComposer } from '../../js/postprocessing/EffectComposer.js';
+import { UnrealBloomPass } from '../../js/postprocessing/UnrealBloomPass.js';
 
 let renderer = null,
     scene = null,
     camera = null,
     canvas = null,
-    controls = null;
+    controls = null,
+    composer = null;
 
 init();
 function init()
@@ -23,6 +28,9 @@ function init()
     
     controls = new OrbitControls(camera, canvas);
     controls.enableDamping = true
+
+    const al = new THREE.AmbientLight(0xffffff, 10000);
+    scene.add(al);
 
     // Create a directional light to show off the object
     let light = new THREE.DirectionalLight( 0xffffff, 0.5);
@@ -46,10 +54,10 @@ function init()
                             //l.shadow.mapSize.width = 2048
                             //l.shadow.mapSize.height = 2048
                         }
-                        camera.lookAt(gltf.scene.position);
                     });
+                    camera.lookAt(gltf.scene.position);
                     scene.add( gltf.scene ); 
-                    console.log("SUCCESS");
+                    console.log(gltf.scene);
                 }, 
                 undefined, 
                 ( error ) => { 
@@ -59,7 +67,21 @@ function init()
     /* Add a mouse up handler to toggle the animation */
 
     // Create the Three.js renderer, add it to our canvas
-    renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: true } );
+    renderer = new THREE.WebGLRenderer( { canvas: canvas, antialias: false } );
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    const renderScene = new RenderPass(scene, camera);
+    composer = new EffectComposer(renderer);
+    composer.setSize(canvas.offsetWidth, canvas.offsetHeight);
+    composer.addPass(renderScene);
+
+    const bloomPass = new UnrealBloomPass(
+        new THREE.Vector2(window.innerWidth, window.innerHeight),
+        5,
+        0.1,
+        0.1
+    )
+    composer.addPass(bloomPass);
 
     // animate our render loop
     animate(); 
@@ -71,7 +93,8 @@ function animate()
 
     controls.update();
 
-    renderer.render( scene, camera );
+    // renderer.render( scene, camera );
+    composer.render();
     // Spin the cube for next frame
     // Ask for another frame
     requestAnimationFrame(animate);
